@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+<suite name="test-parameter">
+
+    <test name="example1">
+
+       <parameter name="min" value="100" />
+
+        <classes>
+            <class name="bing.HomeworkLection3" />
+        </classes>
+
+    </test>
+
+</suite>
