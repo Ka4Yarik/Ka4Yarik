@@ -34,9 +34,9 @@ public class Example {
         System.setProperty("webdriver.chrome.driver","data/chromedriver.exe");
         System.setProperty("webdriver.ie.driver","data/IEDriverServer.exe");
         //Запустить FirefoxDriver
-       driver = new FirefoxDriver();
+       //driver = new FirefoxDriver();
         //Запустить ChromeDriver
-       //  driver = new ChromeDriver();
+         driver = new ChromeDriver();
         //Запустить IEeDriver
         //  driver = new InternetExplorerDriver();
         baseUrl = "http://www.bing.com/";
