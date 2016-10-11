@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Reporter;
 import org.testng.SkipException;
 import org.testng.annotations.*;
@@ -16,6 +18,7 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -29,14 +32,20 @@ public class Example {
 
     @BeforeMethod
     public void setUp() {
-
+        try {
+            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+            driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+        } catch (Exception e) {
+            e.printStackTrace () ;
+            throw new SkipException ("Unable to create RemoteWebDriver instance!");
+        }
        System.setProperty("webdriver.firefox.marionette", "data/geckodriver.exe");
         System.setProperty("webdriver.chrome.driver","data/chromedriver.exe");
         System.setProperty("webdriver.ie.driver","data/IEDriverServer.exe");
         //Запустить FirefoxDriver
        //driver = new FirefoxDriver();
         //Запустить ChromeDriver
-         driver = new ChromeDriver();
+       //  driver = new ChromeDriver();
         //Запустить IEeDriver
         //  driver = new InternetExplorerDriver();
         baseUrl = "http://www.bing.com/";

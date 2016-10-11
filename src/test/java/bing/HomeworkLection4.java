@@ -2,9 +2,14 @@ package bing;
 
 
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Reporter;
 import org.testng.SkipException;
 import org.testng.annotations.*;
@@ -14,6 +19,7 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -24,23 +30,29 @@ public class HomeworkLection4 {
     BufferedReader br = null;
     int min;
     private StringBuffer verificationErrors = new StringBuffer();
+
     @BeforeMethod
     public void setUp() {
-// получаем путь к файлу драйвера любым удобным способом
-        String driverPath = System.getProperty("driver.executable");
-        if (driverPath == null)
-            throw new SkipException("Path to Chromedriver is not specified! ") ;
-        System.setProperty("webdriver.chrome.driver ", driverPath);
-        // System.setProperty("webdriver.firefox.marionette", "data/geckodriver.exe");
-        // driver = new FirefoxDriver();
-        try{
-            driver = new ChromeDriver();
-        } catch (Exception ex){
-            log("Exception while instantiating driver. ");
-        }
+        //Запустить SeleniumGrid
+     /*   try {
+            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+            driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+        } catch (Exception e) {
+            e.printStackTrace () ;
+            throw new SkipException ("Unable to create RemoteWebDriver instance!");
+        }*/
+        System.setProperty("webdriver.firefox.marionette", "data/geckodriver.exe");
+        System.setProperty("webdriver.chrome.driver","data/chromedriver.exe");
+        System.setProperty("webdriver.ie.driver","data/IEDriverServer.exe");
+        //Запустить FirefoxDriver
+       // driver = new FirefoxDriver();
+        //Запустить ChromeDriver
+         driver = new ChromeDriver();
+        //Запустить IEeDriver
+        // driver = new InternetExplorerDriver();
         baseUrl = "http://www.bing.com/";
-          driver.manage().window().maximize();
-         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
     public String getWordFromFile() {
@@ -83,16 +95,17 @@ public class HomeworkLection4 {
         int n = new Random().nextInt(8)+ 1;
         String Expectedtext = driver.findElement(By.xpath("//ol[@id='b_context']/li/ul/li[" + n + "]/a")).getText();
         driver.findElement(By.xpath("//ol[@id='b_context']/li/ul/li[" + n + "]/a")).click();
-        driver.findElement(By.id("sb_form_q")).click();
+        //driver.findElement(By.id("sb_form_q")).click();
         String Actualtext = driver.findElement(By.id("sb_form_q")).getAttribute("value");
         log("проверить, что в поисковой строке содержится текст запроса, который значился в ссылке с блока “Похожие поисковые запросы”, по которой мы перешли.\n");
         assertEquals(Expectedtext, Actualtext);
         System.out.println("Тексты совпадают\n");
-        for (int i = 1; i<9; i++) {
+        Thread.sleep(3000);
+        for (int i = 1; i<10; i++) {
+            try {
             log("проверить что URL соответствует адресу, который отображается на странице результатов.\n");
             driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
             String GetURL1 = driver.findElement(By.xpath("//ol[@id='b_results']/li["+i+"]/div[2]/div")).getText();
-            //      driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
             driver.findElement(By.xpath("//li["+i+"]/div/h2/a")).click();
             String currentURL = driver.getCurrentUrl();
             try {
@@ -106,6 +119,7 @@ public class HomeworkLection4 {
                 driver.findElement(By.xpath("//ol[@id='b_results']/li["+i+"]/div[2]/div/div/div/a")).click();
                 log("Проверить что отображается кэшированная копия той страницы, адрес которой отображается на странице результатов.\n");
                 String CashCopy = driver.findElement(By.xpath("//a")).getText();
+
                 try {
                     assertTrue(CashCopy.contains(GetURL1));
                 } catch (Error e) {
@@ -113,9 +127,12 @@ public class HomeworkLection4 {
                 System.out.println("Оотображается кэшированная копия " +i+ "-й страницы адрес которой отображается на странице результатов.");
                 driver.navigate().back();
             }else{
-                System.out.println("Element is Absent");
+                System.out.println("Кешированная страница не найдена");
             }
 
+            } catch (NoSuchElementException e) {
+
+            }
         }
     }
 

@@ -1,14 +1,15 @@
 package bing;
 
 
-        import java.util.List;
-        import java.util.concurrent.TimeUnit;
-        import org.junit.*;
-        import org.junit.Test;
-        import org.openqa.selenium.*;
-        import org.openqa.selenium.firefox.FirefoxDriver;
-        import org.testng.annotations.*;
-        import org.testng.annotations.AfterClass;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+
+import static org.junit.Assert.assertTrue;
 
 
 public class HomeworkLection2 {
@@ -21,24 +22,24 @@ public class HomeworkLection2 {
         System.setProperty("webdriver.firefox.marionette", "data/geckodriver.exe");
         driver = new FirefoxDriver();
         baseUrl = "http://www.bing.com/";
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
     @Test
     public void testBing() throws Exception {
-     //   System.out.println("Переходим на главную страницу поисковой системы Bing\n");
+         System.out.println("Переходим на главную страницу поисковой системы Bing\n");
         driver.get(baseUrl + "/");
         driver.findElement(By.id("sb_form_q")).click();
         driver.findElement(By.id("sb_form_q")).clear();
         driver.findElement(By.id("sb_form_q")).sendKeys("automation");
         driver.findElement(By.id("sb_form_go")).click();
         System.out.println("Page title is: " + driver.getTitle());
-
-        By mySelector = By.id("b_results");
-        List<WebElement> myElements = driver.findElements(mySelector);
-        for(WebElement e : myElements) {
-            System.out.println(e.getText());
-        }
+        System.out.println("---------Список заголовков-----------" );
+        for (int i = 1; i<=10; i++) {
+            String GetURL = driver.findElement(By.xpath("//ol[@id='b_results']/li["+i+"]/div/h2/a")).getText();
+            System.out.println(GetURL );
+            }
 
     }
     @AfterClass
@@ -46,5 +47,5 @@ public class HomeworkLection2 {
         driver.quit();
     }
 
-    }
+}
 
